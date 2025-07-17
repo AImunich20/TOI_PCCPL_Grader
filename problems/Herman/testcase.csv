@@ -1,0 +1,4 @@
+name,input,output,score
+Testcase 1,1,3.141593 2.000000,30
+Testcase 2,21,1385.442360 882.000000,30
+Testcase 3,42,5541.769441 3528.000000,40

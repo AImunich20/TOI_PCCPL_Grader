@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Sign Up - Contest System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="main-container login-container"> {# Reusing login-container for centering and width #}
+        <div class="content-area login-content-area"> {# Reusing login-content-area #}
+            <div class="header-banner">
+                <h1>Contest System <small>Sign Up</small></h1>
+            </div>
+
+            <div class="signup-section card"> {# New class for signup-specific styling #}
+                <h2>สมัครสมาชิก</h2>
+                <form method="POST">
+                    <div class="form-group">
+                        <label for="FirstName">ชื่อ (First Name):</label>
+                        <input type="text" name="FirstName" id="FirstName" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="LastName">นามสกุล (Last Name):</label>
+                        <input type="text" name="LastName" id="LastName" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Class">ชั้นเรียน (Class):</label>
+                        <input type="text" name="Class" id="Class" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="StudentID">Student ID (ใช้เข้าสู่ระบบ):</label>
+                        <input type="text" name="StudentID" id="StudentID" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Phone">เบอร์โทรศัพท์:</label>
+                        <input type="tel" name="Phone" id="Phone" required>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-submit">สมัครสมาชิก</button>
+                    </div>
+                </form>
+
+                <p class="signup-link">มีบัญชีอยู่แล้ว? <a href="{{ url_for('login') }}">เข้าสู่ระบบ</a></p>
+
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        <ul class="flashed-messages">
+                            {% for msg in messages %}
+                                <li class="message-error">{{ msg }}</li> {# Assuming messages are usually errors #}
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                {% endwith %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

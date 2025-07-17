@@ -1,0 +1,28 @@
+TOI_Zero/
+├── app.py                    # ตัวรัน Flask
+├── grader.py                 # ตัว Grader
+├── problems/                 # โจทย์
+│   └── A1/
+│       ├── testcase.csv      # name,input,output,score
+│       ├── statement.pdf
+│       └── config.json
+├── submissions/              # เก็บโค้ดที่อัปโหลด
+│   └── User_Number/
+│       ├── score.csv         # เป็น score ของเเต่ละข้อเเละเเต่ละครั้งที่ทำ เป็นตัวที่จะเเสดงในหน้า submit ว่าทำไปกี่ครั้งได้คะเเนนเท่าไหร่ มีคลอลั่มดังนี้ ข้อที่ A1,A2.. คะเเนน ... ครั้งที่ ...
+│       ├── U_leaderboard.csv # คะเเนนรวมที่มากที่สุดของทุกข้อ เช่น 5 ข้อ ก็เอาคะเเนนรวมที่มากที่สุดมารวมกัน
+│       └── CODE/
+│           └── Name_A(เลขข้อนั้นๆ)
+├── users.csv                 # ฐานข้อมูลผู้ใช้งาน (Excel) เก็บข้อมูลของเเต่ละคนที่ทำการ sign up ไว้ ชื่อ นามสกุล ชั้น เลขที่ รหัสนักเรียน เบอร์
+├── templates/                # HTML Template
+│   ├── Login.html            # มีปุ่ม signin เพื่อเริ่มต้นใช้งาน
+│   ├── Signup.html           # มีคลอลั่มดังน้ี ชื่อ นามสกุล ชั้น เลขที่ รหัสนักเรียน เบอร์ ให้ทีการใส่ข้อมูลเเละเพิ่มข้อมูลลงใน users.csv มีการตรวจสอบห้ามให้มีการซ้ำของรหัสนักเรียน รหัสนักเรียน 5 หลัก
+│   ├── statement.html        # เป็นหน้าที่ เเสดง statement.pdf เป็นเเบบหน้าจอที่มีขนาดพอดี เเละมีปุ่มให้ดาวโหลดstatementด้วย
+│   ├── submit.html           # เป็นหน้าที่ทำหน้าที่ส่งโค้ด cpp เเบบ grader ใน TOI Zero
+│   └── leaderboard.html      # เป็นปุ่มบนขวาของทุกหน้าให้ดูว่าเเต่ละคนอยู่ลำดับที่เท่าไหร่โดยอ้างอิงจาก leaderboard.csv
+├── static/                   # CSS
+│   └── style.css
+├── leaderboard.csv           # อ้างอิงการเก็บคะเเนนรวมของเเต่ละคน มาจาก U_leaderboard.csv ของเเต่ละคน
+└── README.md
+
+scp -P 26888 -r ~/TOI_Zero/templates maybe@as2.pitunnel.net:/home/maybe/TOI_Zero
+ssh maybe@as2.pitunnel.net -p 26888

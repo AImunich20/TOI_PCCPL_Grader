@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Submit Your Code - Contest System</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    /* สีคะแนนตามระดับ */
+    .score-high { background-color: #65ff89; }
+    .score-mid { background-color: #f7d770; }
+    .score-low { background-color: #ff8892; }
+
+    /* ลิงก์รายละเอียดคะแนน */
+    /* .score-detail-link {
+      color: #007bff;
+      text-decoration: underline;
+      font-size: 1rem;
+      float: right;
+      margin-top: 4px;
+      cursor: pointer;
+    }
+    .score-detail-link:hover { color: #0056b3; }
+
+    /* กล่องป๊อปอัพแสดงรายละเอียดคะแนน
+    .popup {
+      position: absolute;
+      background-color: #fff8dc;
+      border: 1px solid #aaa;
+      padding: 10px;
+      max-width: 400px;
+      z-index: 999;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      white-space: pre-wrap;
+      font-family: monospace;
+    } */
+    .pass {
+      background-color: #d4f8d4; /* สีเขียวอ่อน */
+    }
+    .fail {
+      background-color: #f8d4d4; /* สีแดงอ่อน */
+    }
+
+  </style>
+</head>
+<body>
+<div class="main-container">
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="server-info">
+      <strong>Server PCSHSPL POSN COM</strong><br>
+      <!-- <strong>Server time:</strong> <span id="server-time"></span><br />
+      <strong>Time left:</strong> <span id="countdown"></span> -->
+    </div>
+    <ul class="nav-menu">
+      <li><a href="javascript:location.reload()" class="paddingleft">Home</a></li>
+      <li class="menu-category">PROBLEMS</li>
+      {% for prob in problems %}
+        <li class="has-submenu">
+          <a href="#" data-problem-id="{{ prob }}">{{ prob }}</a>
+          <ul class="submenu">
+            <li><a href="#" class="submenu-item" data-action="statement" data-problem-id="{{ prob }}">Statement</a></li>
+            <li><a href="#" class="submenu-item" data-action="submit" data-problem-id="{{ prob }}">Submit</a></li>
+          </ul>
+        </li>
+      {% endfor %}
+    </ul>
+    <div class="footer-links">
+      <p>Control Management System is released under the <a href="#">GNU Affero General Public License</a>.</p>
+    </div>
+  </div>
+
+  <!-- Content Area -->
+  <div class="content-area">
+    <div class="header-banner">
+      <h1>Contest System <span class="task-name" id="current-task-name">(Select a Problem)</span> <small id="current-form-type"></small></h1>
+      <div class="top-right-links">
+        <a href="{{ url_for('leaderboard') }}">Leaderboard</a> |
+        <a href="{{ url_for('logout') }}">Logout</a>
+      </div>
+    </div>
+
+    <div id="content-display-area" class="card"></div>
+  </div>
+
+</div>
+
+<!-- ป๊อปอัพแสดงรายละเอียดคะแนน -->
+<div id="detail-popup" class="popup" style="display:none;"></div>
+
+<!-- ข้อมูลคะแนนย้อนหลังในรูปแบบ JSON -->
+<script id="submission-history-json" type="application/json">
+  {{ score_by_problem | tojson }}
+</script>
+
+<script>
+// เมื่อโหลดหน้าเว็บเสร็จ
+document.addEventListener('DOMContentLoaded', function () {
+  const historyData = JSON.parse(document.getElementById("submission-history-json").textContent);
+  const contentDisplayArea = document.getElementById('content-display-area');
+  const currentTaskName = document.getElementById('current-task-name');
+  const currentFormType = document.getElementById('current-form-type');
+  const popup = document.getElementById('detail-popup');
+
+  const problemLinks = document.querySelectorAll('.nav-menu li.has-submenu > a');
+  const submenuItems = document.querySelectorAll('.submenu-item');
+
+  const allProblems = {{ problems | tojson }};
+
+  // แสดงสรุปคะแนนรวมตอนเริ่มต้น
+  let initialHTML = `<h2>Your Score Summary</h2>`;
+  let historyTable = `
+    <table class="submissions-table">
+      <thead><tr><th>Problem</th><th>Score</th><th>Date and time</th></tr></thead><tbody>`;
+
+  if (allProblems.length === 0) {
+    initialHTML += `<p class="no-submissions">No submissions yet.</p>`;
+  } else {
+    allProblems.forEach(prob => {
+      const history = historyData[prob];
+      if (history && history.length > 0) {
+        const best = history.sort((a, b) => parseInt(b.Score || "0") - parseInt(a.Score || "0"))[0];
+        const scoreNum = parseInt(best.Score || "0");
+        const scoreClass = scoreNum >= 71 ? "score-high" : scoreNum >= 41 ? "score-mid" : "score-low";
+        historyTable += `<tr><td>${prob}</td><td class="${scoreClass}">${best.Score} / 100</td><td>${best.Date_Time || 'N/A'}</td></tr>`;
+      }
+    });
+    historyTable += `</tbody></table>`;
+    initialHTML += historyTable;
+  }
+  contentDisplayArea.innerHTML = initialHTML;
+
+  // เปิด/ปิดเมนูย่อยใน sidebar
+  problemLinks.forEach(link => {
+    link.addEventListener('click', function (e) {
+      e.preventDefault();
+      const parentLi = this.closest('li.has-submenu');
+      parentLi.classList.toggle('active');
+      document.querySelectorAll('.nav-menu li.has-submenu').forEach(otherLi => {
+        if (otherLi !== parentLi) otherLi.classList.remove('active');
+      });
+    });
+  });
+
+  // คลิกเมนูย่อย (Statement หรือ Submit)
+  submenuItems.forEach(item => {
+    item.addEventListener('click', function (e) {
+      e.preventDefault();
+      const problemId = this.dataset.problemId;
+      const action = this.dataset.action;
+      currentTaskName.textContent = `(${problemId})`;
+      currentFormType.textContent = action === 'submit' ? 'form' : '';
+
+      if (action === 'submit') {
+        const submissionHistory = historyData[problemId];
+        let historyHTML = '';
+
+        if (submissionHistory && submissionHistory.length > 0) {
+          historyHTML += `<h3>Submission History for ${problemId}</h3><table class="submissions-table"><thead><tr><th>Score</th><th>Date and time</th><th>Files</th></tr></thead><tbody>`;
+          const sortedHistory = submissionHistory.sort((a, b) => b.Attempt - a.Attempt);
+          sortedHistory.forEach(record => {
+            const scoreNum = parseInt(record.Score || "0");
+            const scoreClass = scoreNum >= 80 ? "score-high" : scoreNum >= 50 ? "score-mid" : "score-low";
+            historyHTML += `
+              <tr>
+                <td class="${scoreClass}" style="position: relative;">
+                  ${record.Score} / 100
+                  <a href="javascript:void(0);" class="score-detail-link" data-problem="${problemId}" data-attempt="${record.Attempt}">Detail</a>
+                </td>
+                <td>${record.Date_Time || 'N/A'}</td>
+                <td><a class="btn btn-download" href="/submissions/{{ session['user'] }}/CODE/${problemId}_${record.Attempt}.cpp" download>Download</a></td>
+              </tr>`;
+          });
+          historyHTML += `</tbody></table>`;
+        } else {
+          historyHTML = `<p class="no-submissions">No submissions yet for this problem.</p>`;
+        }
+
+        contentDisplayArea.innerHTML = `
+          <h2>Submit Code for ${problemId}</h2>
+          <form method="POST" enctype="multipart/form-data">
+            <div class="form-row">
+              <label for="codefile" class="form-label">Upload .cpp File:</label>
+              <div class="file-input-wrapper flex-grow">
+                <input type="file" name="codefile" id="codefile" accept=".cpp,.c" style="display: none;" required />
+                <label for="codefile" class="custom-file-button">Choose File</label>
+                <span id="file-name-display" class="file-name-display">No file chosen</span>
+              </div>
+            </div>
+            <input type="hidden" name="problem" value="${problemId}" />
+            <div class="form-actions">
+              <button type="submit" class="btn btn-submit">Submit</button>
+              <button type="reset" class="btn btn-reset">Reset</button>
+            </div>
+          </form>
+          <div class="submissions-history card" style="margin-top: 20px;">
+            ${historyHTML}
+          </div>`;
+        attachFileInputListener();
+      } else if (action === 'statement') {
+        contentDisplayArea.innerHTML = `
+          <h2>Problem Statement for ${problemId}</h2>
+          <iframe src="/problems/${problemId}/statement.pdf" width="100%" height="600px" style="border:none;"></iframe>`;
+      }
+
+      this.closest('li.has-submenu').classList.remove('active');
+    });
+  });
+
+  // ฟังก์ชันเพิ่ม event ให้ input file เพื่อแสดงชื่อไฟล์ที่เลือก
+  function attachFileInputListener() {
+    const codefileInput = document.getElementById('codefile');
+    if (codefileInput) {
+      codefileInput.addEventListener('change', function () {
+        const fileName = this.files[0] ? this.files[0].name : 'No file chosen';
+        document.getElementById('file-name-display').textContent = fileName;
+      });
+    }
+  }
+
+  // คลิกข้างนอกลิงก์ Detail ปิด popup
+  document.addEventListener('click', function (e) {
+    if (!e.target.classList.contains('score-detail-link')) {
+      popup.style.display = 'none';
+      return;
+    }
+
+    // ดึงข้อมูลปัญหาและ attempt จาก dataset
+    const problem = e.target.dataset.problem;
+    const attempt = e.target.dataset.attempt;
+
+    // ดึงข้อมูลรายละเอียดจากเซิร์ฟเวอร์
+    fetch(`/get_detail/${problem}/${attempt}`)
+      .then(res => res.ok ? res.text() : "")
+      .then(text => {
+        if (!text.trim()) {
+          popup.innerHTML = "<i>No detail available.</i>";
+        } else {
+          // แปลงข้อความแต่ละบรรทัดเป็น JSON Object
+          const lines = text.trim().split('\n');
+          const data = lines.map(line => {
+            try {
+              const jsonLine = line
+                .replace(/'/g, '"')
+                .replace(/([a-zA-Z0-9_]+):/g, '"$1":');
+              return JSON.parse(jsonLine);
+            } catch {
+              return null;
+            }
+          }).filter(x => x !== null);
+
+          if (!data.length) {
+            popup.innerHTML = "<i>No valid detail data.</i>";
+
+          } else {
+            // สร้างตารางแสดงรายละเอียด testcase, result, score
+            let table = `<table style="border-collapse: collapse; width: 100%;">
+              <thead>
+                <tr>
+                  <th style="border: 1px solid #ccc; padding: 4px;">Testcase</th>
+                  <th style="border: 1px solid #ccc; padding: 4px;">Result</th>
+                  <th style="border: 1px solid #ccc; padding: 4px;">Score</th>
+                </tr>
+              </thead>
+              <tbody>`;
+            data.forEach(row => {
+              // กำหนด class 'pass' ถ้า Score > 0, มิฉะนั้น 'fail'
+              const rowClass = (parseInt(row.Score) > 0) ? 'pass' : 'fail';
+
+              table += `
+                <tr class="${rowClass}">
+                  <td style="border: 1px solid #ccc; padding: 4px; text-align: center;">${row.Testcase}</td>
+                  <td style="border: 1px solid #ccc; padding: 4px;">${row.Result}</td>
+                  <td style="border: 1px solid #ccc; padding: 4px; text-align: center;">${row.Score}</td>
+                </tr>`;
+            });
+
+            table += "</tbody></table>";
+            popup.innerHTML = table;
+          }
+          // ✅ ย้าย setTimeout ออกมานอก if เพื่อให้ทำงานทุกกรณี
+          setTimeout(() => {
+            const rowCount = popup.querySelectorAll('tbody tr').length;
+            const rowHeight = 42; // หรือใช้จริงๆ ด้วย getBoundingClientRect ก็ได้
+            const padding = 40;
+            const maxPopupHeight = Math.min((rowCount * rowHeight + padding), window.innerHeight * 0.8);
+
+            popup.style.maxHeight = maxPopupHeight + 'px';
+            popup.style.display = 'block';  // แสดง popup ที่นี่ หลังปรับความสูง
+          }, 50);
+        }
+        // แสดง popup ตำแหน่งเมาส์ + offset เล็กน้อย
+        popup.style.display = 'block';
+        popup.style.top = (e.pageY + 10) + 'px';
+        popup.style.left = (e.pageX + 10) + 'px';
+      });
+  });
+
+});
+</script>
+
+<!-- <script>
+// แสดงเวลาของเซิร์ฟเวอร์และนับถอยหลัง
+let serverTime = new Date("{{ server_start_time | default('2000-01-01 00:00:00') }}");
+let timeLeft = {{ time_left_seconds | default(0) }};
+const serverTimeElement = document.getElementById('server-time');
+const countdownElement = document.getElementById('countdown');
+
+function updateDisplay() {
+  if (!isNaN(serverTime)) {
+    serverTimeElement.textContent = serverTime.toLocaleString();
+    serverTime = new Date(serverTime.getTime() + 1000);
+  } else {
+    serverTimeElement.textContent = "Loading...";
+  }
+
+  if (timeLeft > 0) {
+    const hours = Math.floor(timeLeft / 3600);
+    const minutes = Math.floor((timeLeft % 3600) / 60);
+    const seconds = timeLeft % 60;
+    countdownElement.textContent = `${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+    timeLeft--;
+  } else {
+    countdownElement.textContent = "Expired";
+  }
+}
+
+updateDisplay();
+setInterval(updateDisplay, 1000);
+</script> -->
+
+</body>
+</html>

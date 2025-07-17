@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login - Contest System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="main-container login-container"> {# Added login-container class for specific alignment #}
+        <div class="content-area login-content-area"> {# Added login-content-area class #}
+            <div class="header-banner">
+                <h1>POSN PCSHSPL Grader<small>Login</small></h1>
+            </div>
+
+            <div class="login-section card">
+                <h2>Login</h2>
+                <form method="POST">
+                    <div class="form-group">
+                        <label for="username">รหัสนักเรียน (Username):</label>
+                        <input type="text" name="username" id="username" required>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-submit">เข้าสู่ระบบ</button>
+                    </div>
+                </form>
+
+                <p class="signup-link">ยังไม่มีบัญชี? <a href="{{ url_for('signup') }}">สมัครสมาชิก</a></p>
+
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        <ul class="flashed-messages">
+                            {% for msg in messages %}
+                                <li class="message-error">{{ msg }}</li> {# Assuming messages are usually errors #}
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                {% endwith %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

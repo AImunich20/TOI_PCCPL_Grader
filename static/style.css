@@ -1,0 +1,989 @@
+/*
+* Global Styles and Variables
+* ----------------------------------------------------
+* This section defines base styles, font imports,
+* and CSS custom properties (variables) for consistent theming.
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+:root {
+    /* Colors */
+    --primary-blue: #38362f;        /* Main accent blue (header, active sidebar, links) */
+    --secondary-blue: #007bff;      /* Darker blue for general links, download buttons */
+    --light-blue-hover: #e6f7ff;    /* Light blue for table row hover */
+
+    --success-green: #4caf50;       /* Green for success (submit button, full score) */
+    --success-green-dark: #45a049;
+    --success-green-light: #90ee90; /* Light green for score background */
+    --success-green-border: #7ed97e;
+
+    --danger-red: #f44336;          /* Red for danger (reset button, zero score) */
+    --danger-red-dark: #d32f2f;
+    --danger-red-light: #ff6347;    /* Light red for zero score background */
+    --danger-red-border: #f5c6cb;   /* Red border for error messages */
+    --danger-red-text: #721c24;     /* Dark red text for error messages */
+    --warning-amber: #6aff07;       /* Amber for partial score */
+
+    /* เพิ่มสีใหม่สำหรับ sidebar text เพื่อความชัดเจน */
+    --sidebar-text-color: #333; /* หรือใช้ var(--text-dark) */
+    --sidebar-active-text: #fff; /* สีข้อความเมื่อ hover/active ใน sidebar */
+    --header-text-color: #fff; /* สีข้อความใน header banner */
+    --details-link-color: #007bff; /* สีลิงก์ details ในตาราง */
+    --button-download-hover: #0056b3; /* สีปุ่ม Download เมื่อ hover */
+    --label-color: var(--text-medium); /* สีของ label ใน form */
+    --link-color: var(--secondary-blue); /* สีของลิงก์ทั่วไป */
+
+
+    --text-dark: #333;              /* Primary text color */
+    --text-medium: #949494;            /* Secondary text color (labels, h2) */
+    --text-light: #666;             /* Tertiary text color (sidebar categories, footer) */
+
+    --bg-light-grey: #f0f2f5;       /* Main page background */
+    --bg-medium-grey: #e0e0e0;      /* Sidebar background */
+    --bg-dark-grey: #e9e9e9;        /* Submission result background, file input button */
+    --bg-white: #fff;               /* Card background */
+    --bg-table-header: #f2f2f2;     /* Table header background */
+    --bg-stripe: #f9f9f9;           /* Table zebra striping */
+    --bg-faint-grey: #fcfcfc;       /* Problem history section background */
+
+    --border-light: #ddd;           /* Light grey border (general) */
+    --border-medium: #ccc;          /* Medium grey border (inputs, file button) */
+    --border-dark: #eee;            /* Darker grey border (h2 underline) */
+
+    /* Typography */
+    --font-family-primary: 'Roboto', sans-serif;
+    --font-family-mono: 'Consolas', 'Monaco', monospace;
+
+    /* Spacing */
+    --spacing-xs: 5px;
+    --spacing-sm: 8px;
+    --spacing-md: 10px;
+    --spacing-lg: 15px;
+    --spacing-xl: 20px;
+    --spacing-xxl: 30px;
+
+    /* Border Radius */
+    --border-radius-sm: 3px;
+    --border-radius-md: 4px;
+    --border-radius-lg: 5px;
+
+    /* Box Shadows */
+    --shadow-light: 0 2px 4px rgba(0,0,0,0.05);
+    --shadow-medium: 0 0 10px rgba(0,0,0,0.1);
+    --shadow-strong: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+
+/*
+* Base Styles
+* ----------------------------------------------------
+* Resets and core typography.
+*/
+body {
+    font-family: var(--font-family-primary);
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-light-grey);
+    color: var(--text-dark);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Align content to the top */
+    min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin-top: 0;
+    margin-bottom: var(--spacing-lg);
+    color: var(--text-medium);
+}
+
+a {
+    color: var(--secondary-blue);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/*
+* Layout
+* ----------------------------------------------------
+* Main container and content area structure.
+*/
+.main-container {
+    display: flex;
+    width: 90%;
+    max-width: 1200px;
+    box-shadow: var(--shadow-medium);
+    background-color: var(--bg-white);
+    border-radius: var(--border-radius-lg);
+    overflow: hidden; /* Ensures content doesn't overflow rounded corners */
+}
+
+/* Specific styling for login container to center it */
+.login-container {
+    display: flex;
+    justify-content: center; /* Center the content horizontally */
+    align-items: center; /* Center the content vertically */
+    min-height: 100vh; /* Take full viewport height */
+    width: 100%; /* Take full width */
+    max-width: 600px; /* Constrain max width for login form */
+    box-shadow: none; /* Remove main container shadow for login page */
+    background-color: transparent; /* Let body background show */
+}
+
+.content-area {
+    flex-grow: 1;
+    padding: var(--spacing-xl);
+    background-color: var(--bg-light-grey); /* Match main background for content */
+}
+
+/* Specific styling for login content area */
+.login-content-area {
+    padding: var(--spacing-xl);
+    background-color: transparent; /* Ensure no extra background */
+    flex-grow: 0; /* Don't let it grow too much */
+    width: 100%; /* Take full width within its container */
+}
+
+/*
+* Sidebar
+* ----------------------------------------------------
+*/
+.sidebar {
+    width: 250px; /* Fixed width for sidebar */
+    background-color: var(--bg-medium-grey);
+    padding: var(--spacing-xl) 0;
+    box-sizing: border-box;
+    border-right: 1px solid var(--border-light); /* Separator from content */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center content horizontally */
+    font-size: 0.9em;
+    flex-shrink: 0; /* Prevent sidebar from shrinking */
+}
+
+.server-info {
+    text-align: center;
+    margin-bottom: var(--spacing-xxl);
+    font-weight: bold;
+    color: var(--sidebar-text-color);
+    padding: 0 var(--spacing-lg); /* Add some padding for text */
+}
+
+.nav-menu {
+    list-style: none;
+    padding: 0;
+    width: 100%;
+    margin-bottom: auto; /* Pushes footer links to the bottom */
+}
+
+.nav-menu li {
+    margin-bottom: 2px;
+}
+
+/* เพิ่ม styles สำหรับ submenu ที่นี่ */
+.nav-menu li.has-submenu {
+    position: relative; /* ให้ submenu สามารถจัดตำแหน่งได้สัมพันธ์กับ li นี้ */
+    /* เพิ่ม transition เพื่อความ smooth เมื่อ hover/unhover */
+    transition: background-color 0.2s ease;
+}
+
+.nav-menu li.has-submenu > a {
+    position: relative; /* เพื่อให้ลิงก์ชื่อปัญหาอยู่เหนือ submenu */
+    z-index: 2; /* ให้ลิงก์ชื่อปัญหาอยู่ด้านบน */
+    display: block; /* ทำให้คลิกได้ทั้งบล็อก */
+    padding: var(--spacing-sm) var(--spacing-xl);
+    text-decoration: none;
+    color: var(--sidebar-text-color);
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.nav-menu li.has-submenu > a:hover {
+    background-color: var(--primary-blue);
+    color: var(--sidebar-active-text);
+}
+
+
+.nav-menu .submenu {
+    list-style: none;
+    padding: 0; /* ลบ padding ด้านซ้ายของ ul */
+    margin: 0; /* ลบ margin */
+    max-height: 0; /* ซ่อน submenu ด้วย max-height */
+    overflow: hidden;
+    transition: max-height 0.3s ease-out; /* สร้าง effect slide */
+    background-color: rgba(0, 0, 0, 0.1); /* พื้นหลังจางๆ สำหรับ submenu */
+    border-top: 1px solid rgba(0, 0, 0, 0.05); /* เส้นแบ่งจางๆ */
+}
+
+/* แสดง submenu เมื่อ hover ที่ li.has-submenu หรือเมื่อมี class 'active' */
+.nav-menu li.has-submenu:hover .submenu,
+.nav-menu li.has-submenu.active .submenu {
+    max-height: 100px; /* ปรับค่านี้ให้สูงพอที่จะแสดง item ทั้งหมด (เช่น 2 items * 20px height + padding) */
+}
+
+.nav-menu .submenu li a {
+    display: block;
+    padding: var(--spacing-xs) var(--spacing-xl) var(--spacing-xs) calc(var(--spacing-xl) + 20px); /* เพิ่ม padding-left เพื่อ indent */
+    text-decoration: none;
+    color: var(--sidebar-text-color); /* ใช้สีเดียวกับ text ทั่วไปใน sidebar */
+    font-size: 0.85em; /* ทำให้เล็กกว่าเล็กน้อย */
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.nav-menu .submenu li a:hover {
+    background-color: var(--secondary-blue); /* สีเมื่อ hover ใน submenu */
+    color: var(--sidebar-active-text);
+}
+
+
+/* แก้ไข .nav-menu a และ .nav-menu li.active a ให้เข้ากับโครงสร้างใหม่ */
+.nav-menu a { /* เปลี่ยน selector นี้เล็กน้อยเพื่อไม่ให้กระทบ submenu a */
+    /* เดิมใช้สำหรับ item หลักเท่านั้น */
+    /* ไม่ควรมี margin-bottom: 2px; สำหรับ nav-menu a เพราะ submenu จะทำให้มี gap */
+}
+
+
+.nav-menu li.active > a { /* เฉพาะลิงก์หลักของ problem ที่ถูกเลือก */
+    background-color: var(--primary-blue);
+    color: var(--sidebar-active-text);
+    font-weight: bold;
+}
+
+.menu-category {
+    font-weight: bold;
+    color: var(--text-light);
+    padding: var(--spacing-md) var(--spacing-xl) var(--spacing-xs);
+    text-transform: uppercase;
+    font-size: 0.8em;
+    letter-spacing: 0.5px;
+    margin-top: var(--spacing-lg);
+}
+
+.footer-links {
+    text-align: center;
+    padding: var(--spacing-xl) var(--spacing-lg) 0;
+    font-size: 0.8em;
+    color: var(--text-light);
+    border-top: 1px solid var(--border-medium); /* Separator line */
+    margin-top: var(--spacing-xl);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.footer-links a {
+    color: var(--secondary-blue);
+    text-decoration: none;
+    display: block; /* Make links stack vertically */
+    margin-bottom: var(--spacing-xs);
+}
+
+.footer-links a:hover {
+    text-decoration: underline;
+}
+
+
+/*
+* Header Banner
+* ----------------------------------------------------
+*/
+.header-banner {
+    background-color: var(--primary-blue);
+    color: var(--header-text-color);
+    padding: var(--spacing-lg) var(--spacing-xl);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: var(--border-radius-md);
+    margin-bottom: var(--spacing-xl);
+    box-shadow: var(--shadow-light); /* Subtle shadow */
+    position: relative; /* For absolute positioning of top-right-links */
+}
+
+/* Adjustments for login/standalone page header */
+.login-content-area .header-banner {
+    padding: var(--spacing-xl) 0; /* More padding top/bottom */
+    justify-content: center; /* Center content in header */
+    margin-bottom: 0; /* No margin below header as card has it */
+}
+
+.header-banner h1 {
+    margin: 0;
+    font-size: 1.5em; /* Adjust font size */
+    font-weight: 400; /* Regular weight for main title */
+}
+
+.login-content-area .header-banner h1 {
+    font-size: 2em; /* Larger title for login page */
+}
+
+.header-banner h1 .task-name {
+    font-weight: 700; /* Bold for the task name in parentheses */
+}
+
+.header-banner small {
+    font-size: 0.7em;
+    margin-left: var(--spacing-xs);
+    opacity: 0.8;
+}
+
+.login-content-area .header-banner small {
+    font-size: 0.6em; /* Smaller sub-text */
+    margin-left: var(--spacing-sm);
+    opacity: 0.9;
+}
+
+/* ลบ .score-display ออกไปแล้ว */
+/* .score-display {
+    background-color: var(--success-green-light);
+    color: var(--text-dark);
+    padding: var(--spacing-xs) var(--spacing-md);
+    border-radius: var(--border-radius-sm);
+    font-weight: bold;
+    border: 1px solid var(--success-green-border);
+    margin-left: auto;
+} */
+
+.top-right-links {
+    position: absolute;
+    top: var(--spacing-md);
+    right: var(--spacing-lg);
+    font-size: 0.9em;
+    background-color: rgba(0,0,0,0.2); /* Semi-transparent background */
+    padding: var(--spacing-xs) var(--spacing-md);
+    border-radius: var(--border-radius-sm);
+}
+
+.top-right-links a {
+    color: var(--header-text-color);
+    text-decoration: none;
+    margin: 0 var(--spacing-xs);
+}
+
+.top-right-links a:hover {
+    text-decoration: underline;
+}
+
+/* Remove elements not needed for login/signup page header */
+.login-content-area .header-banner .score-display,
+.login-content-area .header-banner .top-right-links {
+    display: none; /* Hide score and extra links on login/signup page */
+}
+
+/*
+* Card Components
+* ----------------------------------------------------
+* Generic styling for content blocks.
+*/
+.card {
+    background-color: var(--bg-white);
+    border: 1px solid var(--border-light);
+    border-radius: var(--border-radius-md);
+    padding: var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+    box-shadow: var(--shadow-light); /* Lighter shadow for cards */
+}
+
+.card h2 {
+    margin-top: 0;
+    margin-bottom: var(--spacing-lg);
+    font-size: 1.2em;
+    color: var(--text-medium);
+    border-bottom: 1px solid var(--border-dark); /* Underline for h2 */
+    padding-bottom: var(--spacing-md);
+}
+
+
+/*
+* Forms
+* ----------------------------------------------------
+* General form element styling.
+*/
+.form-group { /* Use for label + input pairs */
+    margin-bottom: var(--spacing-xl);
+}
+
+.form-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: var(--spacing-lg);
+    gap: var(--spacing-lg);
+}
+
+.form-row:last-of-type {
+    margin-bottom: 0;
+}
+
+.form-label {
+    flex-basis: 150px; /* Fixed width for labels */
+    flex-shrink: 0;
+    color: var(--label-color);
+    font-weight: bold;
+    font-size: 0.95em;
+}
+
+.flex-grow {
+    flex-grow: 1; /* Allows the element to take available space */
+}
+
+input[type="text"],
+input[type="tel"],
+input[type="password"],
+.language-select {
+    width: calc(100% - 20px); /* Account for padding */
+    padding: var(--spacing-md);
+    border: 1px solid var(--border-medium);
+    border-radius: var(--border-radius-md);
+    font-size: 1em;
+    box-sizing: border-box; /* Include padding in width */
+    background-color: var(--bg-white);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input[type="text"]:focus,
+input[type="tel"]:focus,
+input[type="password"]:focus,
+.language-select:focus {
+    border-color: var(--secondary-blue);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.language-select { /* Specific for select element if needed */
+    cursor: pointer;
+    min-width: 150px; /* Ensure a minimum width */
+    width: auto; /* Override calc for select if it's not full width */
+}
+
+
+/* Custom file input */
+.file-input-wrapper {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--border-medium);
+    border-radius: var(--border-radius-md);
+    background-color: var(--bg-stripe);
+    padding: var(--spacing-xs);
+    flex-grow: 1;
+}
+
+.custom-file-button {
+    background-color: var(--bg-dark-grey);
+    border: 1px solid var(--border-medium);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--border-radius-sm);
+    cursor: pointer;
+    font-size: 0.9em;
+    color: var(--text-dark);
+    transition: background-color 0.2s ease;
+    white-space: nowrap; /* Prevent button text from wrapping */
+}
+
+.custom-file-button:hover {
+    background-color: var(--border-medium);
+}
+
+.file-name-display {
+    margin-left: var(--spacing-md);
+    color: var(--text-medium);
+    font-size: 0.9em;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Add ellipsis for long file names */
+    white-space: nowrap;
+    flex-grow: 1; /* Allows it to expand */
+}
+
+.form-actions {
+    text-align: right; /* Align buttons to the right */
+    margin-top: var(--spacing-xl);
+}
+
+.btn {
+    padding: var(--spacing-sm) var(--spacing-xl);
+    border: none;
+    border-radius: var(--border-radius-md);
+    cursor: pointer;
+    font-size: 1em;
+    margin-left: var(--spacing-md);
+    transition: background-color 0.2s ease;
+    font-weight: bold;
+}
+
+.btn-submit {
+    background-color: var(--success-green);
+    color: var(--header-text-color);
+}
+
+.btn-submit:hover {
+    background-color: var(--success-green-dark);
+}
+
+.btn-reset {
+    background-color: var(--danger-red);
+    color: var(--header-text-color);
+}
+
+.btn-reset:hover {
+    background-color: var(--danger-red-dark);
+}
+
+.btn-download {
+    background-color: var(--secondary-blue);
+    color: var(--header-text-color);
+    padding: var(--spacing-xs) var(--spacing-md);
+    border-radius: var(--border-radius-sm);
+    font-size: 0.85em;
+    text-transform: uppercase;
+}
+
+.btn-download:hover {
+    background-color: var(--button-download-hover);
+}
+
+
+/*
+* Login / Signup Pages Specific Styles
+* ----------------------------------------------------
+*/
+.login-section, .signup-section {
+    width: 100%;
+    max-width: 400px; /* Default max-width for login */
+    margin: var(--spacing-xxl) auto 0 auto; /* Center the card horizontally and add top margin */
+    padding: var(--spacing-xxl);
+    box-shadow: var(--shadow-strong); /* Stronger shadow for login/signup card */
+}
+
+.signup-section { /* Slightly wider for more input fields on signup */
+    max-width: 450px;
+}
+
+.login-section h2, .signup-section h2 {
+    text-align: center;
+    color: var(--text-dark);
+    border-bottom: none; /* Remove underline */
+    padding-bottom: 0;
+    margin-bottom: var(--spacing-xxl);
+    font-size: 1.8em;
+    font-weight: 700;
+}
+
+.login-section .form-actions, .signup-section .form-actions {
+    text-align: center; /* Center the login/signup button */
+}
+
+.login-section .btn-submit, .signup-section .btn-submit {
+    width: 100%; /* Make button full width */
+    padding: var(--spacing-md) var(--spacing-xl);
+    font-size: 1.1em;
+    margin-left: 0; /* Remove left margin */
+}
+
+.signup-link {
+    text-align: center;
+    margin-top: var(--spacing-xxl);
+    font-size: 0.9em;
+    color: var(--text-medium);
+}
+
+.signup-link a {
+    color: var(--link-color);
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.signup-link a:hover {
+    text-decoration: underline;
+}
+
+
+/*
+* Tables
+* ----------------------------------------------------
+* General table styling.
+*/
+.submissions-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: var(--spacing-md);
+}
+
+.submissions-table th,
+.submissions-table td {
+    border: 1px solid var(--border-light);
+    padding: var(--spacing-md) var(--spacing-lg);
+    text-align: left;
+    font-size: 0.9em;
+}
+
+.submissions-table th {
+    background-color: var(--bg-table-header);
+    font-weight: bold;
+    color: var(--text-medium);
+    text-transform: uppercase;
+    font-size: 0.85em;
+}
+
+.submissions-table tbody tr {
+    background-color: var(--bg-white);
+    transition: background-color 0.2s ease;
+}
+
+.submissions-table tbody tr:nth-child(even) {
+    background-color: var(--bg-stripe); /* Zebra striping */
+}
+
+.submissions-table tbody tr:hover {
+    background-color: var(--light-blue-hover); /* General hover for tables */
+}
+
+.submissions-table .score-full {
+    background-color: var(--success-green-light);
+}
+
+.submissions-table .score-zero {
+    background-color: var(--danger-red-light);
+}
+
+.submissions-table .score-partial {
+    background-color: var(--warning-amber); /* Use if score is not 0 or 100 */
+}
+
+.submissions-table .details-link {
+    color: var(--details-link-color);
+    text-decoration: none;
+    margin-right: var(--spacing-sm); /* Space between link and score */
+    font-size: 0.9em;
+}
+
+.submissions-table .details-link:hover {
+    text-decoration: underline;
+}
+
+.submissions-table .score-value {
+    font-weight: bold;
+}
+
+.no-submissions {
+    text-align: center;
+    font-style: italic;
+    color: var(--text-light);
+    padding: var(--spacing-xl);
+}
+
+/* Specific styles for leaderboard table */
+.leaderboard-table th,
+.leaderboard-table td {
+    text-align: center; /* Center align text for rank and scores */
+}
+.leaderboard-table td:nth-child(2), /* Student ID */
+.leaderboard-table td:nth-child(3) { /* Name */
+    text-align: left; /* Align these columns to left for better readability */
+}
+
+/*
+* Submission Result & History
+* ----------------------------------------------------
+*/
+.submission-result {
+    background-color: var(--bg-dark-grey);
+    border: 1px solid var(--border-medium);
+    padding: var(--spacing-lg);
+    margin-top: var(--spacing-xl);
+    border-radius: var(--border-radius-md);
+    overflow-x: auto; /* Add scroll for preformatted text */
+}
+
+.submission-result h2 {
+    color: var(--text-medium);
+    font-size: 1.2em;
+    margin-top: 0;
+    margin-bottom: var(--spacing-md);
+    border-bottom: 1px solid var(--border-light);
+    padding-bottom: var(--spacing-xs);
+}
+
+.submission-result pre {
+    white-space: pre-wrap; /* Wrap text in pre tags */
+    word-wrap: break-word;
+    font-family: var(--font-family-mono);
+    font-size: 0.9em;
+    line-height: 1.4;
+    color: var(--text-dark);
+}
+
+.submissions-history h2 {
+    margin-bottom: var(--spacing-xl);
+}
+
+.problem-history-section {
+    margin-bottom: var(--spacing-xxl); /* Space between each problem's history */
+    border: 1px solid var(--bg-medium-grey);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-lg);
+    background-color: var(--bg-faint-grey);
+}
+
+.problem-history-section h3 {
+    margin-top: 0;
+    margin-bottom: var(--spacing-lg);
+    color: var(--text-dark);
+    font-size: 1.1em;
+    border-bottom: 1px dashed var(--border-dark); /* Subtle separator for problem name */
+    padding-bottom: var(--spacing-sm);
+}
+
+
+/*
+* Flashed Messages
+* ----------------------------------------------------
+*/
+.flashed-messages {
+    list-style: none;
+    padding: var(--spacing-md) var(--spacing-lg);
+    margin-top: var(--spacing-xl);
+    border-radius: var(--border-radius-md);
+    font-size: 0.9em;
+    text-align: center;
+}
+
+.flashed-messages li {
+    padding: var(--spacing-sm);
+    margin-bottom: var(--spacing-xs);
+    border-radius: var(--border-radius-sm);
+}
+
+.message-error {
+    background-color: #f8d7da; /* Light red */
+    color: var(--danger-red-text); /* Dark red */
+    border: 1px solid var(--danger-red-border);
+}
+
+.message-success {
+    background-color: #d4edda; /* Light green */
+    color: #155724; /* Dark green */
+    border: 1px solid #c3e6cb;
+}
+
+
+/*
+* Responsive Adjustments
+* ----------------------------------------------------
+* Media queries for different screen sizes.
+*/
+@media (max-width: 900px) {
+    .main-container {
+        flex-direction: column;
+        width: 100%;
+        box-shadow: none;
+        border-radius: 0;
+    }
+
+    .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border-light);
+        padding-bottom: var(--spacing-md);
+    }
+
+    .nav-menu {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .nav-menu li {
+        margin: 0 var(--spacing-md);
+    }
+
+    /* ปรับปรุงเมื่อ responsive ให้ submenu ยังคงทำงานได้ดี */
+    .nav-menu li.has-submenu {
+        margin-bottom: 0; /* ลบ margin ระหว่าง li หลัก */
+    }
+
+    .nav-menu li.has-submenu > a {
+        padding: var(--spacing-xs) var(--spacing-md);
+    }
+
+    .nav-menu .submenu {
+        position: absolute; /* ทำให้ submenu ลอยอยู่เหนือ content */
+        background-color: var(--bg-medium-grey); /* สีพื้นหลังของ sidebar */
+        width: auto; /* ให้มันปรับความกว้างตามเนื้อหา */
+        left: 50%; /* จัดกึ่งกลาง */
+        transform: translateX(-50%); /* จัดกึ่งกลางจริงๆ */
+        border-radius: var(--border-radius-md);
+        box-shadow: var(--shadow-light);
+        z-index: 10; /* ให้ลอยอยู่เหนือ content อื่นๆ */
+        white-space: nowrap; /* ป้องกันข้อความใน submenu ไม่ให้ขึ้นบรรทัดใหม่ */
+        margin-top: 5px; /* เว้นระยะห่างจากลิงก์หลัก */
+        border: 1px solid var(--border-medium);
+    }
+
+    .nav-menu .submenu li a {
+        padding: var(--spacing-xs) var(--spacing-md); /* ปรับ padding ให้เล็กลง */
+        text-align: center; /* จัดกลางข้อความใน submenu */
+    }
+
+
+    .menu-category {
+        display: none; /* Hide categories on smaller screens for simplicity */
+    }
+
+    .server-info, .footer-links {
+        margin-bottom: var(--spacing-md);
+        padding: 0 var(--spacing-md);
+    }
+
+    .content-area {
+        padding: var(--spacing-lg);
+    }
+
+    .form-row {
+        flex-direction: column;
+        gap: var(--spacing-md);
+        align-items: flex-start; /* Align labels to the left */
+    }
+
+    .form-label {
+        flex-basis: auto; /* Remove fixed width */
+        width: 100%; /* Take full width */
+    }
+
+    .file-input-wrapper,
+    .language-select,
+    input[type="text"],
+    input[type="tel"],
+    input[type="password"] {
+        width: 100%;
+    }
+
+    .form-actions {
+        text-align: center;
+    }
+
+    .btn {
+        margin: var(--spacing-xs);
+    }
+
+    /* Responsive adjustments for login/signup pages */
+    .login-container {
+        padding: var(--spacing-lg);
+    }
+
+    .login-section, .signup-section {
+        padding: var(--spacing-xl);
+        margin-top: var(--spacing-xl);
+    }
+
+    .login-section h2, .signup-section h2 {
+        font-size: 1.5em;
+        margin-bottom: var(--spacing-xl);
+    }
+}
+
+@media (max-width: 600px) {
+    .header-banner {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: var(--spacing-md) var(--spacing-lg);
+    }
+
+    .header-banner h1 {
+        margin-bottom: var(--spacing-xs);
+    }
+
+    /* ลบ .score-display ออกไปแล้ว */
+    /* .score-display {
+        margin-top: var(--spacing-md);
+        margin-left: 0;
+    } */
+
+    .top-right-links {
+        position: static; /* Make it flow normally */
+        margin-top: var(--spacing-md);
+        background-color: transparent;
+        padding: 0;
+        text-align: left;
+    }
+    .top-right-links a {
+        color: var(--header-text-color); /* Ensure links stay white */
+    }
+
+    .submissions-table th,
+    .submissions-table td {
+        padding: var(--spacing-sm);
+        font-size: 0.8em;
+    }
+
+    /* Adjust specific columns if needed, e.g., hide or reduce padding */
+    .submissions-table th:nth-child(4), /* Files column */
+    .submissions-table td:nth-child(4) {
+        white-space: nowrap;
+    }
+
+    .leaderboard-table td:nth-child(2), /* Student ID */
+    .leaderboard-table td:nth-child(3) { /* Name */
+        white-space: nowrap; /* Prevent wrapping for IDs/Names */
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+.paddingleft{
+    padding-left: 20px;
+}
+
+.score-detail-link {
+  color: #007bff;
+  text-decoration: underline;
+  font-size: 1rem;
+  float: right;
+  margin-top: 4px;
+  cursor: pointer;
+}
+.score-detail-link:hover {
+  color: #0056b3;
+}
+#detail-popup {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: auto;
+  max-width: 90vw;
+  background-color: #ffffff;
+  border: 1px solid #aaa;
+  padding: 10px;
+  z-index: 9999;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+  white-space: normal;
+  font-family: monospace;
+  display: none;
+
+  /* ส่วนสำคัญ: ให้สูงตามเนื้อหา */
+  height: auto;
+  max-height: none;
+  overflow-y: visible;
+}
+
+/* 
+#detail-popup table {
+border-collapse: collapse;
+width: 100%;
+}
+#detail-popup th, #detail-popup td {
+border: 1px solid #ccc;
+padding: 6px 8px;
+text-align: center;
+} */
+#detail-popup td:first-child {
+text-align: left;
+}
+
+#detail-popup table {
+  border-collapse: collapse;
+  width: 100%;
+  table-layout: auto; /* ให้ column ปรับขนาดตามเนื้อหา */
+}

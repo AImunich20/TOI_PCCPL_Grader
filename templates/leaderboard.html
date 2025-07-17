@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Leaderboard - Contest System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+</head>
+<body>
+    <div class="main-container">
+        <div class="sidebar">
+            <div class="server-info">
+                <strong>Server PCSHSPL POSN COM</strong>
+                <!-- <strong>Server time:</strong> <span id="server-time"></span><br>
+                <strong>Time left:</strong> <span id="countdown"></span> -->
+            </div>
+
+            <ul class="nav-menu">
+                <!-- <li><a href="javascript:location.reload()" class="paddingleft">Home</a></li> -->
+                <li class="menu-category">PROBLEMS</li>
+                <li><a href="{{ url_for('submit') }}" class="paddingleft">Submit Code</a></li>
+                <li class="active"><a href="{{ url_for('leaderboard') }}"class="paddingleft">Leaderboard</a></li>
+            </ul>
+
+            <div class="footer-links">
+                <!-- <a href="#">Documentation</a><br>
+                <a href="#">Testing</a><br><br> -->
+                <p>Control Management System is released under the <a href="#">GNU Affero General Public License</a>.</p>
+            </div>
+        </div>
+
+        <div class="content-area">
+            <div class="header-banner">
+                <h1>Leaderboard <small>ranking</small></h1>
+                <div class="top-right-links">
+                    <a href="{{ url_for('submit') }}">Back to Submit</a> |
+                    <a href="{{ url_for('logout') }}">Logout</a>
+                </div>
+            </div>
+
+            <div class="leaderboard-section card">
+                <h2>คะแนนรวม</h2>
+                <table class="submissions-table leaderboard-table">
+                    <thead>
+                        <tr>
+                            <th>อันดับ</th>
+                            <th>รหัสนักเรียน</th>
+                            <th>ชื่อ</th>
+                            <th>คะแนนรวม</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboard-body">
+                        <tr>
+                            <td colspan="4">Loading...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // let serverTime = new Date("{{ server_time | default('2000-01-01 00:00:00') }}");
+        // let timeLeft = {{ time_left_seconds | default(0) }};
+
+        // const serverTimeElement = document.getElementById('server-time');
+        // const countdownElement = document.getElementById('countdown');
+
+        // function updateDisplay() {
+        //     // Server time
+        //     if (!isNaN(serverTime)) {
+        //         serverTimeElement.textContent = serverTime.toLocaleString();
+        //         serverTime = new Date(serverTime.getTime() + 1000);
+        //     } else {
+        //         serverTimeElement.textContent = "Loading...";
+        //     }
+
+        //     // Countdown
+        //     if (timeLeft > 0) {
+        //         const hours = Math.floor(timeLeft / 3600);
+        //         const minutes = Math.floor((timeLeft % 3600) / 60);
+        //         const seconds = timeLeft % 60;
+
+        //         countdownElement.textContent =
+        //             `${hours.toString().padStart(2, '0')}:` +
+        //             `${minutes.toString().padStart(2, '0')}:` +
+        //             `${seconds.toString().padStart(2, '0')}`;
+
+        //         timeLeft--;
+        //     } else {
+        //         countdownElement.textContent = "Expired";
+        //     }
+        // }
+
+        function fetchLeaderboard() {
+            fetch('/api/leaderboard')
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.getElementById('leaderboard-body');
+                    tbody.innerHTML = '';
+
+                    if (data.length === 0) {
+                        tbody.innerHTML = `<tr><td colspan="4" class="no-submissions">No data available for leaderboard.</td></tr>`;
+                        return;
+                    }
+
+                    data.sort((a, b) => b.Total - a.Total);
+                    data.forEach((row, index) => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>${index + 1}</td>
+                            <td>${row.user}</td>
+                            <td>${row.name}</td>
+                            <td>${row.Total}</td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                })
+                .catch(error => {
+                    console.error('Failed to fetch leaderboard:', error);
+                });
+        }
+
+        // เรียกทันที
+        // updateDisplay();
+        fetchLeaderboard();
+
+        // อัปเดตทุก 1 วินาที
+        setInterval(updateDisplay, 1000);
+
+        // อัปเดต leaderboard ทุก 5 วินาที
+        setInterval(fetchLeaderboard, 1000);
+    </script>
+</body>
+</html>

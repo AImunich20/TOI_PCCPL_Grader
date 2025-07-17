@@ -1,0 +1,4 @@
+{'Testcase': 'Testcase 1', 'Result': 'Passed', 'Score': 25}
+{'Testcase': 'Testcase 2', 'Result': 'Passed', 'Score': 25}
+{'Testcase': 'Testcase 3', 'Result': 'Passed', 'Score': 0}
+{'Testcase': 'Testcase 4', 'Result': 'Passed', 'Score': 0}

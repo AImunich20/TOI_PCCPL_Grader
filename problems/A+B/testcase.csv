@@ -1,0 +1,5 @@
+name,input,output,score
+Testcase 1,4 5,9,25
+Testcase 2,8 9,17,25
+Testcase 3,10 -11,-1,0
+Testcase 4,0 -50,-50,0
