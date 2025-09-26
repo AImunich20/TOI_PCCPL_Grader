@@ -5,11 +5,16 @@ def up(app):
   from urllib.parse import unquote, quote
 
   # PATH เป้าหมายแต่ละคอลัมน์
+  import os
+
+  BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+  
   TARGET_PATHS = {
-      "1": "/home/aipython/TOI_Zero/",
-      "2": "/home/aipython/TOI_Zero/problems",
-      "3": "/home/aipython/TOI_Zero/templates"
+      "1": os.path.join(BASE_DIR, ""),                 # root ของโปรเจกต์
+      "2": os.path.join(BASE_DIR, "problems"),         # โฟลเดอร์ problems
+      "3": os.path.join(BASE_DIR, "templates")         # โฟลเดอร์ templates
   }
+
 
   @app.route('/upcode')
   def index():
